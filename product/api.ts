@@ -16,13 +16,33 @@ const api = {
         return new Promise<Product[]>((resolve, reject) => {
           Papa.parse(response.data, {
             header: true,
+            skipEmptyLines: true,
             complete: (results) => {
+              console.log('CSV Raw data:', results.data);
+              console.log('CSV Errors:', results.errors);
+              console.log('CSV Meta:', results.meta);
+              
               const products = results.data as Product[];
+              
+              // Filtrar productos con datos válidos
+              const validProducts = products.filter(product => {
+                const hasTitle = product.title && product.title.trim() !== '';
+                const hasPrice = product.price && !isNaN(Number(product.price));
+                return hasTitle && hasPrice;
+              });
+              
+              console.log('Valid products:', validProducts);
+              console.log('Total products found:', validProducts.length);
+              console.log('Sample product:', validProducts[0]);
+              
               return resolve(
-                products.map((product, index) => ({
-                  ...product,
+                validProducts.map((product, index) => ({
                   id: product.id || `product-${index}`,
-                  price: Number(product.price),
+                  title: product.title?.trim() || '',
+                  category: product.category?.trim() || '',
+                  description: product.description?.trim() || '',
+                  image: product.image?.trim() || '',
+                  price: Number(product.price) || 0,
                 }))
               );
             },

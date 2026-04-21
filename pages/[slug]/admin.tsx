@@ -181,6 +181,8 @@ const StoreAdmin: NextPage<{ storeData: StoreData }> = ({ storeData }) => {
       return;
     }
 
+    console.log('Updating sheet URL:', { storeId: storeData.id, sheetUrl: editingSheetUrl });
+
     setLoading(true);
     try {
       const res = await fetch('/api/store/update-sheet', {

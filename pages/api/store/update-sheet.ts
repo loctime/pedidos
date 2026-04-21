@@ -8,13 +8,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     const { storeId, sheetUrl } = req.body;
+    
+    console.log('Update sheet request:', { storeId, sheetUrl });
 
     if (!storeId || !sheetUrl) {
+      console.log('Missing fields:', { storeId: !!storeId, sheetUrl: !!sheetUrl });
       return res.status(400).json({ error: 'Faltan campos requeridos' });
     }
 
     // Validar que sea una URL de Google Sheets válida
     if (!sheetUrl.includes('docs.google.com/spreadsheets') || !sheetUrl.includes('output=csv')) {
+      console.log('Invalid URL format:', sheetUrl);
       return res.status(400).json({ error: 'URL de Google Sheets inválida. Debe ser un enlace público con formato CSV.' });
     }
 
