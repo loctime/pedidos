@@ -157,87 +157,88 @@ const StorePage: NextPage<Props> = ({ storeName, sheetUrl, whatsappNumber }) => 
           ) : (
             <Grid gridGap={5} templateColumns="repeat(auto-fill, minmax(240px, 1fr))">
               {products.map((product) => (
-                <Stack
-                  key={product.id}
-                  backgroundColor="brand.card"
-                  borderRadius="xl"
-                  overflow="hidden"
-                  border="1px solid"
-                  borderColor="brand.border"
-                  spacing={0}
-                  transition="all 0.2s ease"
-                  _hover={{
-                    borderColor: 'primary.500',
-                    transform: 'translateY(-2px)',
-                    boxShadow: '0 0 0 1px rgba(34,197,94,0.4), 0 8px 24px rgba(0,0,0,0.4)',
-                  }}
-                  role="group"
-                >
-                  <Box position="relative" overflow="hidden">
-                    <Image
-                      height="160px"
-                      width="100%"
-                      objectFit="cover"
-                      src={product.image}
-                      alt={product.title}
-                      transition="transform 0.3s ease"
-                      _groupHover={{ transform: 'scale(1.05)' }}
-                      fallbackSrc="https://via.placeholder.com/400x200/1e293b/94a3b8?text=Sin+imagen"
-                    />
-                    {product.category && (
-                      <Badge
-                        position="absolute"
-                        top={2}
-                        left={2}
-                        backgroundColor="rgba(15,23,42,0.85)"
-                        color="primary.400"
-                        borderRadius="full"
-                        paddingX={2.5}
-                        paddingY={0.5}
-                        fontSize="2xs"
-                        fontWeight="700"
-                        textTransform="uppercase"
-                        letterSpacing="0.08em"
-                        backdropFilter="blur(8px)"
-                        border="1px solid rgba(34,197,94,0.3)"
-                      >
-                        {product.category}
-                      </Badge>
-                    )}
-                  </Box>
-
-                  <Stack spacing={3} padding={4} flex={1}>
-                    <Box flex={1}>
-                      <Text color="brand.text" fontWeight="700" fontSize="sm" lineHeight="1.3" marginBottom={1}>
-                        {product.title}
-                      </Text>
-                      {product.description && (
-                        <Text color="brand.muted" fontSize="xs" lineHeight="1.5" noOfLines={2}>
-                          {product.description}
-                        </Text>
+                <Box key={product.id}>
+                  <Stack
+                    backgroundColor="brand.card"
+                    borderRadius="xl"
+                    overflow="hidden"
+                    border="1px solid"
+                    borderColor="brand.border"
+                    spacing={0}
+                    transition="all 0.2s ease"
+                    _hover={{
+                      borderColor: 'primary.500',
+                      transform: 'translateY(-2px)',
+                      boxShadow: '0 0 0 1px rgba(34,197,94,0.4), 0 8px 24px rgba(0,0,0,0.4)',
+                    }}
+                    role="group"
+                  >
+                    <Box position="relative" overflow="hidden">
+                      <Image
+                        height="160px"
+                        width="100%"
+                        objectFit="cover"
+                        src={product.image}
+                        alt={product.title}
+                        transition="transform 0.3s ease"
+                        _groupHover={{ transform: 'scale(1.05)' }}
+                        fallbackSrc="https://via.placeholder.com/400x200/1e293b/94a3b8?text=Sin+imagen"
+                      />
+                      {product.category && (
+                        <Badge
+                          position="absolute"
+                          top={2}
+                          left={2}
+                          backgroundColor="rgba(15,23,42,0.85)"
+                          color="primary.400"
+                          borderRadius="full"
+                          paddingX={2.5}
+                          paddingY={0.5}
+                          fontSize="2xs"
+                          fontWeight="700"
+                          textTransform="uppercase"
+                          letterSpacing="0.08em"
+                          backdropFilter="blur(8px)"
+                          border="1px solid rgba(34,197,94,0.3)"
+                        >
+                          {product.category}
+                        </Badge>
                       )}
                     </Box>
-                    <HStack justifyContent="space-between" alignItems="center">
-                      <Text color="primary.400" fontWeight="800" fontSize="lg" letterSpacing="-0.02em">
-                        {parseCurrency(product.price)}
-                      </Text>
-                    </HStack>
-                    <Button
-                      size="sm"
-                      fontWeight="700"
-                      borderRadius="lg"
-                      backgroundColor="rgba(34,197,94,0.1)"
-                      color="primary.400"
-                      border="1px solid rgba(34,197,94,0.3)"
-                      _hover={{ backgroundColor: 'primary.500', color: 'white', borderColor: 'primary.500' }}
-                      _active={{ backgroundColor: 'primary.600', borderColor: 'primary.600' }}
-                      transition="all 0.15s ease"
-                      onClick={() => setCart((cart) => cart.concat(product))}
-                    >
-                      + Agregar al carrito
-                    </Button>
+
+                    <Stack spacing={3} padding={4} flex={1}>
+                      <Box flex={1}>
+                        <Text color="brand.text" fontWeight="700" fontSize="sm" lineHeight="1.3" marginBottom={1}>
+                          {product.title}
+                        </Text>
+                        {product.description && (
+                          <Text color="brand.muted" fontSize="xs" lineHeight="1.5" noOfLines={2}>
+                            {product.description}
+                          </Text>
+                        )}
+                      </Box>
+                      <HStack justifyContent="space-between" alignItems="center">
+                        <Text color="primary.400" fontWeight="800" fontSize="lg" letterSpacing="-0.02em">
+                          {parseCurrency(product.price)}
+                        </Text>
+                      </HStack>
+                      <Button
+                        size="sm"
+                        fontWeight="700"
+                        borderRadius="lg"
+                        backgroundColor="rgba(34,197,94,0.1)"
+                        color="primary.400"
+                        border="1px solid rgba(34,197,94,0.3)"
+                        _hover={{ backgroundColor: 'primary.500', color: 'white', borderColor: 'primary.500' }}
+                        _active={{ backgroundColor: 'primary.600', borderColor: 'primary.600' }}
+                        transition="all 0.15s ease"
+                        onClick={() => setCart((cart) => cart.concat(product))}
+                      >
+                        + Agregar al carrito
+                      </Button>
+                    </Stack>
                   </Stack>
-                </Stack>
+                </Box>
               ))}
             </Grid>
           )}
