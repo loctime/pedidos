@@ -46,6 +46,7 @@ interface StoreData {
   storeName: string;
   sheetUrl: string;
   whatsappNumber: string;
+  driveEmail?: string;
   createdAt: string;
 }
 
@@ -67,6 +68,7 @@ const StoreAdmin: NextPage<{ storeData: StoreData }> = ({ storeData }) => {
   const [syncStatus, setSyncStatus] = useState<SyncStatus>({ status: 'loading' });
   const [products, setProducts] = useState<Product[]>([]);
   const [editingSheetUrl, setEditingSheetUrl] = useState('');
+  const [driveEmail, setDriveEmail] = useState('');
   const [loading, setLoading] = useState(false);
 
   // Verificar estado de sincronización
@@ -100,8 +102,9 @@ const StoreAdmin: NextPage<{ storeData: StoreData }> = ({ storeData }) => {
   useEffect(() => {
     if (isAuthenticated) {
       checkSyncStatus();
+      setDriveEmail(storeData.driveEmail || '');
     }
-  }, [isAuthenticated, checkSyncStatus]);
+  }, [isAuthenticated, checkSyncStatus, storeData.driveEmail]);
 
   const handleLogin = () => {
     if (password === '123456') {
@@ -211,6 +214,52 @@ const StoreAdmin: NextPage<{ storeData: StoreData }> = ({ storeData }) => {
     } catch (error) {
       toast({
         title: 'Error al actualizar URL',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDriveEmailUpdate = async () => {
+    if (!driveEmail) {
+      toast({
+        title: 'El email no puede estar vacío',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await fetch('/api/store/update-drive-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          storeId: storeData.id, 
+          driveEmail: driveEmail 
+        }),
+      });
+
+      if (res.ok) {
+        storeData.driveEmail = driveEmail;
+        toast({
+          title: 'Email de Drive actualizado',
+          description: 'Te notificaremos cuando tu Google Sheets esté listo.',
+          status: 'success',
+          duration: 3000,
+          isClosable: true,
+        });
+      } else {
+        throw new Error('Error al actualizar email');
+      }
+    } catch (error) {
+      toast({
+        title: 'Error al actualizar email',
         status: 'error',
         duration: 3000,
         isClosable: true,
@@ -426,6 +475,73 @@ const StoreAdmin: NextPage<{ storeData: StoreData }> = ({ storeData }) => {
               </Box>
             </Box>
 
+            {/* Configuración de Email de Drive */}
+            <Box>
+              <Heading size="md" color="brand.text" fontWeight="800" letterSpacing="-0.02em" marginBottom={4}>
+                Configuración de Google Drive
+              </Heading>
+              
+              <Box
+                backgroundColor="brand.card"
+                border="1px solid"
+                borderColor="brand.border"
+                borderRadius="xl"
+                padding={6}
+              >
+                <Stack spacing={4}>
+                  <Alert status="info" borderRadius="lg" fontSize="sm">
+                    <AlertIcon />
+                    <Box>
+                      <Text fontWeight="600" marginBottom={1}>¿Necesitas un Google Sheets?</Text>
+                      <Text>Proporciona tu email de Google Drive y crearemos un archivo de productos para ti.</Text>
+                    </Box>
+                  </Alert>
+
+                  <FormControl>
+                    <FormLabel color="brand.muted" fontSize="sm" fontWeight="600">
+                      Email de Google Drive
+                    </FormLabel>
+                    <Input
+                      value={driveEmail}
+                      onChange={(e) => setDriveEmail(e.target.value)}
+                      placeholder="tuemail@gmail.com"
+                      backgroundColor="brand.bg"
+                      borderColor="brand.border"
+                      color="brand.text"
+                      _placeholder={{ color: 'brand.muted' }}
+                      type="email"
+                    />
+                    <Text color="brand.muted" fontSize="xs" marginTop={1}>
+                      Compartiremos tu archivo de productos en este email
+                    </Text>
+                  </FormControl>
+
+                  {storeData.driveEmail && (
+                    <Box backgroundColor="rgba(34,197,94,0.1)" border="1px solid rgba(34,197,94,0.2)" borderRadius="lg" padding={3}>
+                      <HStack spacing={2}>
+                        <Text>{'✉️'}</Text>
+                        <Text color="primary.400" fontSize="sm" fontWeight="600">
+                          Email registrado: {storeData.driveEmail}
+                        </Text>
+                      </HStack>
+                    </Box>
+                  )}
+
+                  <Button
+                    onClick={handleDriveEmailUpdate}
+                    isLoading={loading}
+                    backgroundColor="primary.500"
+                    color="white"
+                    fontWeight="700"
+                    borderRadius="lg"
+                    _hover={{ backgroundColor: 'primary.600' }}
+                  >
+                    Guardar Email de Drive
+                  </Button>
+                </Stack>
+              </Box>
+            </Box>
+
             {/* Configuración de Google Sheets */}
             <Box>
               <Heading size="md" color="brand.text" fontWeight="800" letterSpacing="-0.02em" marginBottom={4}>
@@ -572,6 +688,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
       storeName: data.storeName,
       sheetUrl: data.sheetUrl,
       whatsappNumber: data.whatsappNumber,
+      driveEmail: data.driveEmail || '',
       createdAt: data.createdAt?.toDate().toISOString() || new Date().toISOString()
     } as StoreData;
 

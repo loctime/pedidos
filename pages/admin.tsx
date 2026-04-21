@@ -45,6 +45,7 @@ interface Client {
   storeName: string;
   sheetUrl: string;
   whatsappNumber: string;
+  driveEmail?: string;
   createdAt: string;
 }
 
@@ -54,6 +55,7 @@ const emptyForm = {
   storeName: '',
   sheetUrl: '',
   whatsappNumber: '',
+  driveEmail: '',
 };
 
 const Admin: NextPage = () => {
@@ -106,6 +108,7 @@ const Admin: NextPage = () => {
       storeName: client.storeName,
       sheetUrl: client.sheetUrl,
       whatsappNumber: client.whatsappNumber,
+      driveEmail: client.driveEmail || '',
     });
     setEditId(client.id);
     setError('');
@@ -228,6 +231,7 @@ const Admin: NextPage = () => {
                     <Th color="brand.muted" fontWeight="700" fontSize="xs" paddingY={3}>TIENDA</Th>
                     <Th color="brand.muted" fontWeight="700" fontSize="xs" paddingY={3}>URL PÚBLICA</Th>
                     <Th color="brand.muted" fontWeight="700" fontSize="xs" paddingY={3}>WHATSAPP</Th>
+                    <Th color="brand.muted" fontWeight="700" fontSize="xs" paddingY={3}>EMAIL DRIVE</Th>
                     <Th color="brand.muted" fontWeight="700" fontSize="xs" paddingY={3}>GOOGLE SHEET</Th>
                     <Th paddingY={3}></Th>
                   </Tr>
@@ -235,7 +239,7 @@ const Admin: NextPage = () => {
                 <Tbody>
                   {clients.length === 0 && (
                     <Tr>
-                      <Td colSpan={5} textAlign="center" paddingY={12} color="brand.muted">
+                      <Td colSpan={6} textAlign="center" paddingY={12} color="brand.muted">
                         No hay tiendas aún. ¡Crea la primera!
                       </Td>
                     </Tr>
@@ -286,6 +290,20 @@ const Admin: NextPage = () => {
                       </Td>
                       <Td color="brand.muted" fontSize="sm" paddingY={4}>
                         +{client.whatsappNumber}
+                      </Td>
+                      <Td paddingY={4}>
+                        {client.driveEmail ? (
+                          <HStack spacing={2}>
+                            <Text>{'✉️'}</Text>
+                            <Text color="brand.muted" fontSize="xs" fontFamily="mono">
+                              {client.driveEmail}
+                            </Text>
+                          </HStack>
+                        ) : (
+                          <Text color="brand.muted" fontSize="xs" fontStyle="italic">
+                            No registrado
+                          </Text>
+                        )}
                       </Td>
                       <Td paddingY={4}>
                         <Tooltip label={client.sheetUrl} placement="top">
@@ -401,6 +419,16 @@ const Admin: NextPage = () => {
                   value={form.whatsappNumber}
                   onChange={(e) => setForm((f) => ({ ...f, whatsappNumber: e.target.value }))}
                   placeholder="510000000000"
+                />
+              </FormControl>
+              <FormControl>
+                <FormLabel color="brand.muted" fontSize="sm" fontWeight="600">Email de Google Drive (Opcional)</FormLabel>
+                <Input
+                  {...inputStyle}
+                  value={form.driveEmail}
+                  onChange={(e) => setForm((f) => ({ ...f, driveEmail: e.target.value }))}
+                  placeholder="cliente@gmail.com"
+                  type="email"
                 />
               </FormControl>
             </Stack>
