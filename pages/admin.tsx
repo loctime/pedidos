@@ -38,6 +38,7 @@ import {
   TableContainer,
 } from '@chakra-ui/react';
 import { sessionOptions } from '../lib/session';
+import { usersCollection } from '../lib/firebase-admin';
 
 interface Client {
   id: string;

@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { db } from '../../../lib/firebase-admin';
+import { usersCollection } from '../../../lib/firebase-admin';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
@@ -23,7 +23,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     // Actualizar URL en Firebase
-    await db.collection('clients').doc(storeId).update({
+    await usersCollection().doc(storeId).update({
       sheetUrl: sheetUrl,
       updatedAt: new Date().toISOString()
     });

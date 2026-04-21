@@ -36,7 +36,7 @@ import {
   StatNumber,
   StatHelpText,
 } from '@chakra-ui/react';
-import { db } from '../../lib/firebase-admin';
+import { usersCollection } from '../../lib/firebase-admin';
 import api from '../../product/api';
 import { Product } from '../../product/types';
 
@@ -670,8 +670,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const slug = params?.slug as string;
 
   try {
-    const snapshot = await db
-      .collection('clients')
+    const snapshot = await usersCollection()
       .where('username', '==', slug)
       .limit(1)
       .get();

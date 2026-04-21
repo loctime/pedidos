@@ -18,7 +18,7 @@ import {
 } from '@chakra-ui/react';
 import api from '../product/api';
 import { Product } from '../product/types';
-import { db } from '../lib/firebase-admin';
+import { usersCollection } from '../lib/firebase-admin';
 
 interface Props {
   storeName: string;
@@ -296,8 +296,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const slug = params?.slug as string;
 
   try {
-    const snapshot = await db
-      .collection('clients')
+    const snapshot = await usersCollection()
       .where('username', '==', slug)
       .limit(1)
       .get();

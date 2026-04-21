@@ -13,3 +13,6 @@ if (!admin.apps.length) {
 }
 
 export const db = admin.firestore();
+
+// Helper para acceder a la colección de usuarios en /apps/pedidos/users
+export const usersCollection = () => db.collection('apps').doc('pedidos').collection('users');

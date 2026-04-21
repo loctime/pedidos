@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { getIronSession } from 'iron-session';
 import bcrypt from 'bcryptjs';
 import { sessionOptions } from '../../../lib/session';
-import { db } from '../../../lib/firebase-admin';
+import { usersCollection } from '../../../lib/firebase-admin';
 
 async function requireAdmin(req: NextApiRequest, res: NextApiResponse) {
   const session = await getIronSession(req, res, sessionOptions);
@@ -17,7 +17,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const session = await requireAdmin(req, res);
   if (!session) return;
 
-  const col = db.collection('clients');
+  const col = usersCollection();
 
   if (req.method === 'GET') {
     const snapshot = await col.orderBy('createdAt', 'desc').get();
@@ -30,7 +30,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   if (req.method === 'POST') {
-    const { username, password, storeName, sheetUrl, whatsappNumber } = req.body;
+    const { username, password, storeName, sheetUrl, whatsappNumber, driveEmail } = req.body;
     if (!username || !password || !storeName || !sheetUrl) {
       return res.status(400).json({ error: 'Faltan campos requeridos' });
     }
@@ -47,6 +47,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       storeName,
       sheetUrl,
       whatsappNumber: whatsappNumber || '510000000000',
+      driveEmail: driveEmail || '',
       createdAt: new Date(),
     });
 
@@ -54,7 +55,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   if (req.method === 'PUT') {
-    const { id, storeName, sheetUrl, whatsappNumber, password } = req.body;
+    const { id, storeName, sheetUrl, whatsappNumber, password, driveEmail } = req.body;
     if (!id) return res.status(400).json({ error: 'Falta el id' });
 
     const updates: Record<string, unknown> = {};
@@ -62,6 +63,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (sheetUrl) updates.sheetUrl = sheetUrl;
     if (whatsappNumber) updates.whatsappNumber = whatsappNumber;
     if (password) updates.passwordHash = await bcrypt.hash(password, 12);
+    if (driveEmail !== undefined) updates.driveEmail = driveEmail;
 
     await col.doc(id).update(updates);
     return res.json({ ok: true });
